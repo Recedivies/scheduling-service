@@ -19,11 +19,11 @@ import java.util.UUID;
 @Table(name = "task_execution_history")
 public class TaskExecutionHistory {
     @Id
-    @GeneratedValue(strategy=GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
-    private boolean deletedByCascade = false;
+    private final boolean deletedByCascade = false;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE default CURRENT_TIMESTAMP")
