@@ -10,6 +10,6 @@ ENV JDBC_DATABASE_URL ${JDBC_DATABASE_URL}
 ENV JDBC_DATABASE_USERNAME ${JDBC_DATABASE_USERNAME}
 
 WORKDIR /app
-COPY ./build/libs/scheduling-service-0.0.1-SNAPSHOT.jar /app
+COPY ./build/libs/scheduling_service-0.0.1-SNAPSHOT.jar /app
 EXPOSE 8080
-CMD ["java","-jar","scheduling-service-0.0.1-SNAPSHOT.jar"]
+CMD ["java","-jar","scheduling_service-0.0.1-SNAPSHOT.jar"]
