@@ -18,6 +18,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Declarables createTaskScheduleSchema() {
+        System.out.println("[DEBUG] HELLO DECLARE X & Q");
         return new Declarables(
                 new DirectExchange(TASK_DIRECT_EXCHANGE),
                 new Queue(QUEUE_TASK),
