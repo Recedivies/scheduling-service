@@ -91,7 +91,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 }
             }
         } catch (AmqpException e) {
-            System.out.println("AmqpException: " + e.getMessage());
+            System.out.println("AmqpException: " + e);
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
         }
