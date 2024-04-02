@@ -8,6 +8,8 @@ import com.example.scheduling_service.producer.TaskProducer;
 import com.example.scheduling_service.repository.JobRepository;
 import com.example.scheduling_service.repository.TaskExecutionHistoryRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -51,39 +53,47 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Bean
     @Scheduled(fixedDelay = 1000 * 60)
     public void pollingTaskSchedule() {
-        while (getZSetSize() > 0) {
-            Set<ZSetOperations.TypedTuple<String>> s = redisTemplate.opsForZSet().rangeWithScores(TASK_SCHEDULE_ZSET_KEY, 0L, 0L);
-            assert s != null;
-            ZSetOperations.TypedTuple<String> task = s.stream().findFirst().orElse(null);
+        try {
+            while (getZSetSize() > 0) {
+                Set<ZSetOperations.TypedTuple<String>> s = redisTemplate.opsForZSet()
+                        .rangeWithScores(TASK_SCHEDULE_ZSET_KEY, 0L, 0L);
+                assert s != null;
+                ZSetOperations.TypedTuple<String> task = s.stream().findFirst().orElse(null);
 
-            double scoreDouble = task.getScore();
-            long nextExecutionTime = (long) scoreDouble;
-            String jobId = task.getValue();
+                double scoreDouble = task.getScore();
+                long nextExecutionTime = (long) scoreDouble;
+                String jobId = task.getValue();
 
-            Instant instant = Instant.now();
+                Instant instant = Instant.now();
 
-            long currentExecutionTime = instant.getEpochSecond() / 60;
-            System.out.println(currentExecutionTime + " " + nextExecutionTime + " " + jobId);
+                long currentExecutionTime = instant.getEpochSecond() / 60;
+                System.out.println(currentExecutionTime + " " + nextExecutionTime + " " + jobId);
 
-            if (currentExecutionTime < nextExecutionTime) {
-                break;
+                if (currentExecutionTime < nextExecutionTime) {
+                    break;
+                }
+
+                Job job = this.findById(jobId);
+                System.out.println(job);
+
+                taskProducer.processTaskSchedule(String.valueOf(job.getId()));
+                updateTaskExecutionHistory(job);
+
+                if (job.isRecurring()) {
+                    nextExecutionTime = LocalDateTime.now()
+                            .plus(Duration.parse(job.getInterval()))
+                            .atZone(ZoneOffset.systemDefault())
+                            .toInstant()
+                            .getEpochSecond() / 60;
+                    redisTemplate.opsForZSet().popMin(TASK_SCHEDULE_ZSET_KEY);
+                    redisTemplate.opsForZSet().add(TASK_SCHEDULE_ZSET_KEY, String.valueOf(job.getId()),
+                            nextExecutionTime);
+                }
             }
-
-            Job job = this.findById(jobId);
-            System.out.println(job);
-
-            taskProducer.processTaskSchedule(String.valueOf(job.getId()));
-            updateTaskExecutionHistory(job);
-
-            if (job.isRecurring()) {
-                nextExecutionTime = LocalDateTime.now()
-                        .plus(Duration.parse(job.getInterval()))
-                        .atZone(ZoneOffset.systemDefault())
-                        .toInstant()
-                        .getEpochSecond() / 60;
-                redisTemplate.opsForZSet().popMin(TASK_SCHEDULE_ZSET_KEY);
-                redisTemplate.opsForZSet().add(TASK_SCHEDULE_ZSET_KEY, String.valueOf(job.getId()), nextExecutionTime);
-            }
+        } catch (AmqpException e) {
+            System.out.println("AmqpException: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 
