@@ -32,6 +32,7 @@ public class RabbitMQConfig {
     public RabbitTemplate rabbitTemplate(ConnectionFactory factory) {
         RabbitTemplate template = new RabbitTemplate(factory);
         template.setMessageConverter(new Jackson2JsonMessageConverter());
+        System.out.println("[DEBUG] HELLO RABBIT TEMPLATE ?");
         return template;
     }
 }

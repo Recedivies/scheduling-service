@@ -12,6 +12,7 @@ public class TaskProducer {
     private RabbitTemplate rabbitTemplate;
 
     public void processTaskSchedule(String jobId) {
+        System.out.println("[DEBUG] HELLO PRODUCT MESSAGE ? " + jobId);
         rabbitTemplate.convertAndSend(RabbitMQConfig.TASK_DIRECT_EXCHANGE, RabbitMQConfig.ROUTING_KEY_TASK, jobId);
     }
 }
