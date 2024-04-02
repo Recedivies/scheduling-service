@@ -64,7 +64,7 @@ Publish Docker Build:
       --build-arg RABBITMQ_PORT="$RABBITMQ_PORT" \
       --build-arg RABBITMQ_USER="$RABBITMQ_USER" \
       --build-arg RABBITMQ_PASSWORD="$RABBITMQ_PASSWORD" \
-      -t $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG \
+      -t "$REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG" \
       .
 
     - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
