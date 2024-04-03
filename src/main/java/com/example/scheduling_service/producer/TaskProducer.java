@@ -1,6 +1,6 @@
 package com.example.scheduling_service.producer;
 
-import com.example.scheduling_service.config.rabbit.RabbitMQConfig;
+import com.example.scheduling_service.config.RabbitMQConfig;
 
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -15,7 +15,7 @@ public class TaskProducer {
 
     public void processTaskSchedule(String jobId) throws AmqpException {
         System.out.println("[DEBUG] HELLO PRODUCT MESSAGE ? " + jobId);
-        rabbitTemplate.convertAndSend(RabbitMQConfig.TASK_DIRECT_EXCHANGE, RabbitMQConfig.ROUTING_KEY_TASK, jobId);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "myRoutingKey.messages", jobId);
         System.out.println("[DEBUG] Send msg = " + jobId);
     }
 }

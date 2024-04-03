@@ -1,4 +1,4 @@
-package com.example.scheduling_service.config.rabbit;
+package com.example.scheduling_service.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -10,26 +10,37 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String TASK_DIRECT_EXCHANGE = "x.manja";
-    public static final String QUEUE_TASK = "q.maja";
+//    public static final String TASK_DIRECT_EXCHANGE = "x.manja";
+//    public static final String QUEUE_TASK = "q.maja";
 //    public static final String QUEUE_TASK_RETRY = "q.task-retry";
-
-    public static final String ROUTING_KEY_TASK = "manja";
+//
+//    public static final String ROUTING_KEY_TASK = "manja";
 //    public static final String ROUTING_KEY_TASK_RETRY = "task-retry";
+
+    public static final String QUEUE_NAME = "myQueue";
+    public static final String EXCHANGE_NAME = "myTopicExchange";
+    public static final String ROUTING_KEY = "myRoutingKey.#";
 
     @Bean
     Queue createQueue() {
-        return new Queue(QUEUE_TASK, false);
+        return new Queue(QUEUE_NAME, false);
     }
 
     @Bean
-    DirectExchange exchange() {
-        return new DirectExchange(TASK_DIRECT_EXCHANGE);
+    TopicExchange exchange() {
+        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
-    Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY_TASK);
+    Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    }
+
+    @Bean
+    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        return container;
     }
 //    @Bean
 //    public Declarables createTaskScheduleSchema() {
@@ -44,10 +55,10 @@ public class RabbitMQConfig {
 //                        TASK_DIRECT_EXCHANGE, ROUTING_KEY_TASK_RETRY, null));
 //    }
 
-    @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        return container;
-    }
+//    @Bean
+//    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
+//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//        return container;
+//    }
 }
