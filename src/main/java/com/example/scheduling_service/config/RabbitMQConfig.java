@@ -4,10 +4,10 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@EnableRabbit
 @Configuration
 public class RabbitMQConfig {
     public static final String TASK_DIRECT_EXCHANGE = "x.task";
@@ -38,5 +38,11 @@ public class RabbitMQConfig {
                         TASK_DIRECT_EXCHANGE, ROUTING_KEY_TASK, null),
                 new Binding(QUEUE_TASK_RETRY, Binding.DestinationType.QUEUE,
                         TASK_DIRECT_EXCHANGE, ROUTING_KEY_TASK_RETRY, null));
+    }
+    @Bean
+    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        return container;
     }
 }
