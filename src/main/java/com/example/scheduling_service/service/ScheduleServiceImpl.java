@@ -9,6 +9,8 @@ import com.example.scheduling_service.repository.JobRepository;
 import com.example.scheduling_service.repository.TaskExecutionHistoryRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     private TaskProducer taskProducer;
+
+    Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final JobRepository jobRepository;
     private final TaskExecutionHistoryRepository taskExecutionHistoryRepository;
@@ -89,9 +93,9 @@ public class ScheduleServiceImpl implements ScheduleService {
                 }
             }
         } catch (AmqpException e) {
-            System.out.println("AmqpException: " + e);
+            logger.error("AmqpException: " + e);
         } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
+            logger.error("Exception: " + e);
         }
     }
 

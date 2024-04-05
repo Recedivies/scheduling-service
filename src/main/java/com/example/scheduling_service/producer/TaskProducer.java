@@ -2,6 +2,8 @@ package com.example.scheduling_service.producer;
 
 import com.example.scheduling_service.config.rabbit.RabbitMQConfig;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,11 @@ public class TaskProducer {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    Logger logger = LoggerFactory.getLogger(getClass().getName());
+
+
     public void processTaskSchedule(String jobId) throws AmqpException {
-        System.out.println("[DEBUG] HELLO PRODUCT MESSAGE ? " + jobId);
         rabbitTemplate.convertAndSend(RabbitMQConfig.TASK_DIRECT_EXCHANGE, "task", jobId);
-        System.out.println("[DEBUG] Send msg = " + jobId);
+        logger.info("Send task = " + jobId);
     }
 }
