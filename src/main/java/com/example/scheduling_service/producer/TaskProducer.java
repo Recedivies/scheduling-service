@@ -15,7 +15,7 @@ public class TaskProducer {
 
     public void processTaskSchedule(String jobId) throws AmqpException {
         System.out.println("[DEBUG] HELLO PRODUCT MESSAGE ? " + jobId);
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "myRoutingKey.messages", jobId);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TASK_DIRECT_EXCHANGE, "task", jobId);
         System.out.println("[DEBUG] Send msg = " + jobId);
     }
 }
