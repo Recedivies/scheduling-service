@@ -1,11 +1,13 @@
 package com.example.scheduling_service;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
+@EnableRabbit
 public class SchedulingServiceApplication {
 
 	public static void main(String[] args) {
