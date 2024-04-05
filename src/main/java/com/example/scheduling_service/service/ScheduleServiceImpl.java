@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +77,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 Job job = this.findById(jobId);
                 System.out.println(job);
 
+                redisTemplate.opsForZSet().popMin(TASK_SCHEDULE_ZSET_KEY);
                 taskProducer.processTaskSchedule(String.valueOf(job.getId()));
                 updateTaskExecutionHistory(job);
 
@@ -85,9 +87,15 @@ public class ScheduleServiceImpl implements ScheduleService {
                             .atZone(ZoneOffset.systemDefault())
                             .toInstant()
                             .getEpochSecond() / 60;
-                    redisTemplate.opsForZSet().popMin(TASK_SCHEDULE_ZSET_KEY);
+                    System.out.println("NEXT " + nextExecutionTime);
                     redisTemplate.opsForZSet().add(TASK_SCHEDULE_ZSET_KEY, String.valueOf(job.getId()),
                             nextExecutionTime);
+                }
+
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
                 }
             }
         } catch (AmqpException e) {

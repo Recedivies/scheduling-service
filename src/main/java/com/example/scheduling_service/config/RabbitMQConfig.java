@@ -2,6 +2,7 @@ package com.example.scheduling_service.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -10,6 +11,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+//@EnableRabbit
 @Configuration
 public class RabbitMQConfig {
 //    public static final String TASK_DIRECT_EXCHANGE = "x.manja";
@@ -19,23 +21,33 @@ public class RabbitMQConfig {
 //    public static final String ROUTING_KEY_TASK = "manja";
 //    public static final String ROUTING_KEY_TASK_RETRY = "task-retry";
 
-    public static final String QUEUE_NAME = "myQueue";
+    public static final String QUEUE_NAME = "myQueue3";
     public static final String EXCHANGE_NAME = "myTopicExchange";
     public static final String ROUTING_KEY = "myRoutingKey.#";
 
+//    @Bean
+//    public ConnectionFactory connectionFactory() {
+//        return new CachingConnectionFactory();
+//    }
+//    @Bean
+//    public AmqpAdmin amqpAdmin() {
+//        return new RabbitAdmin(connectionFactory());
+//    }
+
     @Bean
-    Queue createQueue() {
+    public Queue myQueue() {
         return new Queue(QUEUE_NAME, false);
     }
 
     @Bean
-    TopicExchange exchange() {
+    public TopicExchange myExchange() {
+        System.out.println("HELLO?");
         return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    public Binding binding() {
+        return BindingBuilder.bind(myQueue()).to(myExchange()).with(ROUTING_KEY);
     }
 
     @Bean
