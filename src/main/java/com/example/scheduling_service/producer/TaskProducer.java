@@ -1,6 +1,6 @@
 package com.example.scheduling_service.producer;
 
-import com.example.scheduling_service.config.RabbitMQConfig;
+import com.example.scheduling_service.config.rabbit.RabbitMQConfig;
 
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

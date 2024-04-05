@@ -1,4 +1,4 @@
-package com.example.scheduling_service.config;
+package com.example.scheduling_service.config.rabbit;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
