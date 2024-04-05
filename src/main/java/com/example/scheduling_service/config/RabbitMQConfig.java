@@ -18,27 +18,30 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_TASK_RETRY = "task-retry";
 
     @Bean
-    public ConnectionFactory connectionFactory() {
-        return new CachingConnectionFactory();
+    public Queue taskQueue() {
+        return new Queue(QUEUE_TASK, false);
     }
 
     @Bean
-    public RabbitAdmin admin(ConnectionFactory cf) {
-        return new RabbitAdmin(cf);
+    public Queue taskRetryQueue() {
+        return new Queue(QUEUE_TASK_RETRY, false);
     }
 
     @Bean
-    public Declarables createTaskScheduleSchema() {
-        System.out.println("[DEBUG] HELLO DECLARE X & Q");
-        return new Declarables(
-                new DirectExchange(TASK_DIRECT_EXCHANGE),
-                new Queue(QUEUE_TASK),
-                new Queue(QUEUE_TASK_RETRY),
-                new Binding(QUEUE_TASK, Binding.DestinationType.QUEUE,
-                        TASK_DIRECT_EXCHANGE, ROUTING_KEY_TASK, null),
-                new Binding(QUEUE_TASK_RETRY, Binding.DestinationType.QUEUE,
-                        TASK_DIRECT_EXCHANGE, ROUTING_KEY_TASK_RETRY, null));
+    public DirectExchange exchangeTask() {
+        return new DirectExchange(TASK_DIRECT_EXCHANGE);
     }
+
+    @Bean
+    public Binding bindingTask() {
+        return BindingBuilder.bind(taskQueue()).to(exchangeTask()).with(ROUTING_KEY_TASK);
+    }
+
+    @Bean
+    public Binding bindingTaskRetry() {
+        return BindingBuilder.bind(taskRetryQueue()).to(exchangeTask()).with(ROUTING_KEY_TASK_RETRY);
+    }
+
     @Bean
     SimpleMessageListenerContainer container(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
