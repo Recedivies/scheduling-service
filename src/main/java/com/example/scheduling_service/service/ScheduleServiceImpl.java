@@ -79,8 +79,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                 Job job = this.findById(jobId);
 
                 redisTemplate.opsForZSet().popMin(TASK_SCHEDULE_ZSET_KEY);
-                taskProducer.processTaskSchedule(String.valueOf(job.getId()));
                 updateTaskExecutionHistory(job);
+                taskProducer.processTaskSchedule(String.valueOf(job.getId()), job.getJobType());
 
                 if (job.isRecurring()) {
                     nextExecutionTime = LocalDateTime.now()

@@ -18,8 +18,8 @@ public class TaskProducer {
     Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 
-    public void processTaskSchedule(String jobId) throws AmqpException {
-        rabbitTemplate.convertAndSend(RabbitMQConfig.TASK_DIRECT_EXCHANGE, "task", jobId);
+    public void processTaskSchedule(String jobId, String jobType) throws AmqpException {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TASK_DIRECT_EXCHANGE, "task."+jobType, jobId);
         logger.info("Send task = " + jobId);
     }
 }

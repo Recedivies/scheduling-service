@@ -12,8 +12,8 @@ public class RabbitMQConfig {
     public static final String QUEUE_TASK = "q.task";
     public static final String QUEUE_TASK_RETRY = "q.task-retry";
 
-    public static final String ROUTING_KEY_TASK = "task";
-    public static final String ROUTING_KEY_TASK_RETRY = "task-retry";
+    public static final String ROUTING_KEY_TASK = "task.*";
+    public static final String ROUTING_KEY_TASK_RETRY = "task-retry.*";
 
     @Bean
     public Queue taskQueue() {
@@ -26,8 +26,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public DirectExchange exchangeTask() {
-        return new DirectExchange(TASK_DIRECT_EXCHANGE);
+    public TopicExchange exchangeTask() {
+        return new TopicExchange(TASK_DIRECT_EXCHANGE);
     }
 
     @Bean
